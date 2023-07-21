@@ -1,17 +1,31 @@
 .buttons{
     margin: 25px;
+    padding: 0;
     box-shadow: 0 5px 30px rgba(0, 0, 0, .2);
-    padding: 20px;
-    height: 224px;
+    height: 280px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    background-color: white;
+    margin-left: none;
+    border-radius: 10px;
+}
+
+.label{
+    padding: 13px;
 }
 
 .button{
-    margin: 10px;
+    height: 45px;
+    cursor: pointer;
     display: flex;
     align-items: center;
+    margin: 0;
+    padding: 0 10px 0 10px;
+}
+
+.button:hover{
+    background-color: #eceff7;
 }
 
 

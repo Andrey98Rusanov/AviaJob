@@ -1,6 +1,7 @@
 .filters{
-    width: 440px;
+    width: 540px;
     display: flex;
+    justify-content: space-around;
     margin: 20px auto 20px auto;
     border: solid rgb(205, 192, 192) 1px;
     border-radius: 10px;
@@ -8,12 +9,12 @@
 }
 
 .filter{
-   width: 150px;
+   width: 50%;
    height: 50px;
-   background-color: inherit;
+   background-color: white;
    border: none;
    cursor: pointer;
-   font-size: 15px;
+   font-size: 17px;
 }
 
 .filter:nth-child(1){
@@ -22,17 +23,11 @@
 }
 
 .filter:nth-child(2){
-    border-radius: 0;
-    border-left: solid rgb(205, 192, 192) 1px;
-    border-right: solid rgb(205, 192, 192) 1px;
-}
-
-.filter:nth-child(3){
-    border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px
 }
 
-.filter:hover{
+.active{
     background-color: #0d9cfb;
-    color: white;
+    color: #fff;
 }
