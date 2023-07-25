@@ -2,7 +2,7 @@ import "./Items.css";
 import { useDispatch, useSelector } from "react-redux";
 
 function Items() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const state = useSelector((state) => state);
   const stopsValidation = (n) => {
     if (n === 1) return "пересадка";
@@ -33,31 +33,65 @@ function Items() {
   };
   const ticketsFilter = (tickets) => {
     if (tickets.length) {
-      const tickClone = tickets.slice(0)
-      const one = state.one ? tickClone.filter((el) => el.segments[0].stops.length === 1 && el.segments[1].stops.length === 1) : []
-      const two = state.two ? tickClone.filter((el) => el.segments[0].stops.length === 2 && el.segments[1].stops.length === 2) : []
-      const three = state.three ? tickClone.filter((el) => el.segments[0].stops.length === 3 && el.segments[1].stops.length === 3) : []
-      const withOut = state.withOut ? tickClone.filter((el) => el.segments[0].stops.length === 0 && el.segments[1].stops.length === 0) : []
-      const fullTickArr = [...one,...two,...three,...withOut]
-      if (fullTickArr.length === 0) return
-      if (state.price) fullTickArr.sort((a,b) => a.price > b.price ? 1 : -1)
-      if (state.speed) fullTickArr.sort((a,b) => a.segments[0].duration + a.segments[1].duration > b.segments[0].duration + b.segments[1].duration ? 1 : -1)
-      return fullTickArr
+      const tickClone = tickets.slice(0);
+      const one = state.one
+        ? tickClone.filter(
+            (el) =>
+              el.segments[0].stops.length === 1 &&
+              el.segments[1].stops.length === 1
+          )
+        : [];
+      const two = state.two
+        ? tickClone.filter(
+            (el) =>
+              el.segments[0].stops.length === 2 &&
+              el.segments[1].stops.length === 2
+          )
+        : [];
+      const three = state.three
+        ? tickClone.filter(
+            (el) =>
+              el.segments[0].stops.length === 3 &&
+              el.segments[1].stops.length === 3
+          )
+        : [];
+      const withOut = state.withOut
+        ? tickClone.filter(
+            (el) =>
+              el.segments[0].stops.length === 0 &&
+              el.segments[1].stops.length === 0
+          )
+        : [];
+      const fullTickArr = state.all
+        ? tickClone
+        : [...one, ...two, ...three, ...withOut];
+      if (fullTickArr.length === 0) return;
+      if (state.price) fullTickArr.sort((a, b) => (a.price > b.price ? 1 : -1));
+      if (state.speed)
+        fullTickArr.sort((a, b) =>
+          a.segments[0].duration + a.segments[1].duration >
+          b.segments[0].duration + b.segments[1].duration
+            ? 1
+            : -1
+        );
+      return fullTickArr.slice(0, state.tickCount);
     }
-
-  }
+  };
   const moreTickClick = () => {
-    dispatch({type: "MORE_TICKETS"})
-  }
+    dispatch({ type: "MORE_TICKETS" });
+  };
   let tickets = [];
-  if ((state.all || state.one || state.two || state.three || state.withOut) && state.tickets.length !== 0) {
+  if (
+    (state.all || state.one || state.two || state.three || state.withOut) &&
+    state.tickets.length !== 0
+  ) {
     let key = 1;
     for (let el of ticketsFilter(state.tickets)) {
       tickets.push(
         <div key={key} className="item">
           <div className="price">
             <div className="cost">{el.price} Р</div>
-            <img src={"//pics.avs.io/99/36/" + el.carrier +".png"}></img>
+            <img src={"//pics.avs.io/99/36/" + el.carrier + ".png"} alt="img"></img>
           </div>
           <div className="info">
             <div className="gray">
@@ -113,14 +147,22 @@ function Items() {
       );
       key++;
     }
-  } else if (state.tickets.length !==0) return <div className="not_res">Рейсов, подходящих под заданные фильтры, не найдено</div>
-  return <>
-  {tickets.slice(0,state.tickCount)}
-  {state.tickCount < tickets.length ? 
-  <button className="moreTickButton" onClick={() => moreTickClick()}>Показать еще 5 билетов</button>
-  : null
-  }
-  </>;
+  } else if (state.tickets.length !== 0)
+    return (
+      <div className="not_res">
+        Рейсов, подходящих под заданные фильтры, не найдено
+      </div>
+    );
+  return (
+    <>
+      {tickets}
+      {tickets.length !== 0 ? (
+        <button className="moreTickButton" onClick={() => moreTickClick()}>
+          Показать еще 5 билетов
+        </button>
+      ) : null}
+    </>
+  );
 }
 
 export default Items;

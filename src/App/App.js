@@ -1,37 +1,37 @@
 import Filters from "../Filters/Filters";
 import Items from "../Items/Items";
 import Buttons from "../Buttons/Buttons";
-import { useDebugValue, useEffect, useMemo } from "react";
+import {  useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
-import Loader from "../antd_components/spinner";
+import Loader from "../ui_components/spinner";
+import NetWorkAlert from "../ui_components/Alert";
 
 function App() {
   const dispatch = useDispatch();
-  const id = useSelector((state) => state.id)
-  const tickets = useSelector((state) => state.tickets)
-  const isLoad = useSelector((state) => state.load)
+  const {id, load, internet} = useSelector((state) => state)
 
   async function addId() {
     const promiseId = await fetch(
       "https://aviasales-test-api.kata.academy/search"
     );
     const id = await promiseId.json();
-    dispatch({type: "ADD_ID", payload: id.searchId})
+    dispatch({ type: "ADD_ID", payload: id.searchId });
   }
 
   async function addTickets() {
     if (id !== 0) {
-    try {
-      const promiseTickets = await fetch(
-        `https://aviasales-test-api.kata.academy/tickets?searchId=${id}`
-      );
-    const tickets = await promiseTickets.json();
-    dispatch({ type: "ADD_TICKETS", payload: tickets.tickets });
-    if (!tickets.stop) addTickets()
-    if (tickets.stop) dispatch({type: "IS_LOAD"})
-      } catch (e) {if (!tickets.stop) addTickets()
-    }
+      try {
+        const promiseTickets = await fetch(
+          `https://aviasales-test-api.kata.academy/tickets?searchId=${id}`
+        );
+        const tickets = await promiseTickets.json();
+        dispatch({ type: "ADD_TICKETS", payload: tickets.tickets });
+        if (!tickets.stop) addTickets();
+        if (tickets.stop) dispatch({ type: "IS_LOAD", payload: false });
+      } catch (e) {
+        if (e.name!=="TypeError") addTickets()
+      }
     }
   }
   useEffect(() => {
@@ -39,18 +39,26 @@ function App() {
   }, []);
 
   useEffect(() => {
-    addTickets()
-  }, [id])
+    addTickets();
+  }, [id, internet]);
 
-  console.log(tickets)
-  console.log(isLoad)
+  useEffect(() => {
+    window.onoffline = () => {
+      dispatch({type: "INTERNET_OFF"})
+    };
+    window.ononline = () => {
+      dispatch({type: "INTERNET_ON"})
+    };
+  })
+
   return (
     <div className="app">
       <Buttons />
       <div>
         <Filters />
-       {isLoad ? <Loader/> : null}
-       <Items/>
+        {load && internet ? <Loader /> : null}
+        {internet ? null : <NetWorkAlert/>}
+        <Items />
       </div>
     </div>
   );
